@@ -29,7 +29,7 @@ const colorClassMap: Record<string, string> = {
   green: styles.colorGreen,
 };
 
-// This component for infinite scrolling
+// This little invisible component helps us do infinite scrolling
 function Infinite({ onVisible }: { onVisible: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
 
