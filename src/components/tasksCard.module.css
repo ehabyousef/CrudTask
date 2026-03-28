@@ -1,0 +1,78 @@
+
+/* Task Card */
+.taskCard {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: move;
+  transition: all 0.2s;
+}
+
+.taskCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #d1d5db;
+  transform: translateY(-2px);
+}
+
+.taskTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.taskDescription {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.taskFooter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* badges */
+.badgeHigh {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #fee2e2;
+  color: #991b1b;
+  text-transform: uppercase;
+}
+
+.badgeMedium {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #fef3c7;
+  color: #92400e;
+  text-transform: uppercase;
+}
+
+.badgeLow {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #f3f4f6;
+  color: #374151;
+  text-transform: uppercase;
+}
+
+.badgeDefault {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #e5e7eb;
+  color: #374151;
+  text-transform: uppercase;
+}

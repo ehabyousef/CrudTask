@@ -1,0 +1,117 @@
+{
+  "tasks": [
+    {
+      "id": "2",
+      "title": "Unit tests",
+      "description": "Write tests for utility functions and hooks",
+      "priority": "LOW",
+      "column": "backlog"
+    },
+    {
+      "id": "3",
+      "title": "Performance audit",
+      "description": "Lighthouse scores and bundle analysis",
+      "priority": "LOW",
+      "column": "backlog"
+    },
+    {
+      "id": "4",
+      "title": "Notification system",
+      "description": "Toast notifications and in-app alerts",
+      "priority": "MEDIUM",
+      "column": "backlog"
+    },
+    {
+      "id": "6",
+      "title": "Authentication flow",
+      "description": "Implement login, signup, and password reset screens",
+      "priority": "HIGH",
+      "column": "backlog"
+    },
+    {
+      "id": "8",
+      "title": "Dashboard layout",
+      "description": "Build responsive sidebar and main content area",
+      "priority": "MEDIUM",
+      "column": "backlog"
+    },
+    {
+      "id": "9",
+      "title": "Design system tokens",
+      "description": "Set up color palette, typography, and spacing scales",
+      "priority": "HIGH",
+      "column": "backlog"
+    },
+    {
+      "title": "dsad",
+      "description": "dsad",
+      "priority": "MEDIUM",
+      "column": "backlog",
+      "id": "y3f7MoRZ6FU"
+    },
+    {
+      "title": "dsadddd",
+      "description": "dsad",
+      "priority": "HIGH",
+      "column": "review",
+      "id": "Wt94qBDmyyQ"
+    },
+    {
+      "title": "das",
+      "description": "dsa",
+      "priority": "HIGH",
+      "column": "backlog",
+      "id": "2Iz2EGD_Vrg"
+    },
+    {
+      "title": "dsad",
+      "description": "sad",
+      "priority": "MEDIUM",
+      "column": "In Progress",
+      "id": "Y5AOxNujU0g"
+    },
+    {
+      "title": "dasd",
+      "description": "sadad",
+      "priority": "MEDIUM",
+      "column": "review",
+      "id": "loDAxRQRSFg"
+    },
+    {
+      "title": "nb",
+      "description": "dasdsad",
+      "priority": "HIGH",
+      "column": "Done",
+      "id": "DqtbZZsoChg"
+    },
+    {
+      "title": "sa",
+      "description": "dsad",
+      "priority": "LOW",
+      "column": "backlog",
+      "id": "zN5VchLk5tA"
+    },
+    {
+      "title": "new",
+      "description": "dddddssssssssaaaaaaaaa",
+      "priority": "LOW",
+      "column": "backlog",
+      "id": "2IgL3R8lMxQ"
+    },
+    {
+      "title": "ddsa",
+      "description": "dsads",
+      "priority": "MEDIUM",
+      "column": "backlog",
+      "id": "5k8-nsBnBG0"
+    },
+    {
+      "title": "dsad",
+      "description": "sadsa",
+      "priority": "HIGH",
+      "column": "backlog",
+      "id": "zNTn7cQ9hmM"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
