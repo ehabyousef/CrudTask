@@ -1,7 +1,9 @@
 import { create } from "zustand";
 
+// This is where our fake backend
 const API_URL = "http://localhost:4000/tasks";
 
+// words are allowed for columns and priorities
 export type TaskColumn = "backlog" | "In Progress" | "review" | "Done";
 export type TaskPriority = "HIGH" | "MEDIUM" | "LOW";
 
@@ -12,7 +14,6 @@ export interface Task {
   priority: TaskPriority;
   column: TaskColumn;
 }
-
 interface TasksState {
   tasks: Task[];
   searchQuery: string;
@@ -21,14 +22,13 @@ interface TasksState {
   setSearchQuery: (query: string) => void;
   setTasksOrder: (tasks: Task[]) => void;
   fetchTasks: () => Promise<void>;
-  addTask: (task: Omit<Task, "id">) => Promise<void>;
-  updateTask: (id: number, updates: Partial<Omit<Task, "id">>) => Promise<void>;
+  addTask: (task: Omit<Task, "id">) => Promise<void>; // Omit here as the server makes ids
+  updateTask: (id: number, updates: Partial<Omit<Task, "id">>) => Promise<void>; // Partial becauser we onlypass what changed
   deleteTask: (id: number) => Promise<void>;
   moveTask: (id: number, column: TaskColumn) => Promise<void>;
 }
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
-
 export const useTasksStore = create<TasksState>()((set, get) => ({
   tasks: [],
   searchQuery: "",
@@ -38,13 +38,14 @@ export const useTasksStore = create<TasksState>()((set, get) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setTasksOrder: (tasks) => set({ tasks }),
 
+  // get all the tasks
   fetchTasks: async () => {
     set({ loading: true });
     try {
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error("fetch failed");
       const data: Task[] = await res.json();
-      set({ tasks: data, error: "" });
+      set({ tasks: data, error: "" }); // Yay, we got data! Save it to state and clear any errors.
     } catch {
       set({
         error:
@@ -55,6 +56,7 @@ export const useTasksStore = create<TasksState>()((set, get) => ({
     }
   },
 
+  // new task
   addTask: async (task) => {
     try {
       const res = await fetch(API_URL, {
@@ -71,6 +73,7 @@ export const useTasksStore = create<TasksState>()((set, get) => ({
     }
   },
 
+  // update the task
   updateTask: async (id, updates) => {
     try {
       const res = await fetch(`${API_URL}/${id}`, {
@@ -104,6 +107,7 @@ export const useTasksStore = create<TasksState>()((set, get) => ({
     }
   },
 
+  //change the column property when we drag/drop
   moveTask: async (id, column) => {
     await get().updateTask(id, { column });
   },

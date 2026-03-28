@@ -27,6 +27,7 @@ export function AddTaskDialog({
   onClose,
   onSubmit,
 }: AddTaskDialogProps) {
+  // Local state for the inputs
   const [title, setTitle] = useState(mode === "edit" && task ? task.title : "");
   const [description, setDescription] = useState(
     mode === "edit" && task ? task.description : "",
@@ -39,10 +40,12 @@ export function AddTaskDialog({
     event.preventDefault();
 
     const trimmedTitle = title.trim();
+    // Don't save if they didn't even type a title
     if (!trimmedTitle) {
       return;
     }
 
+    // Call the function that passed down from TasksBoard
     await onSubmit({
       title: trimmedTitle,
       description: description.trim(),
@@ -67,6 +70,7 @@ export function AddTaskDialog({
           <div className="modal-content">
             <form onSubmit={handleSubmit}>
               <div className="modal-header">
+                {/* Dynamically change the title depending on if we are adding or editing */}
                 <h5 className="modal-title">
                   {mode === "add" ? "Add task" : "Update task"}
                 </h5>
@@ -154,7 +158,6 @@ export function AddTaskDialog({
           </div>
         </div>
       </div>
-
       <div className="modal-backdrop fade show"></div>
     </>
   );

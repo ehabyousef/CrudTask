@@ -29,16 +29,18 @@ const colorClassMap: Record<string, string> = {
   green: styles.colorGreen,
 };
 
+// This little invisible component helps us do infinite scrolling
 function Infinite({ onVisible }: { onVisible: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ref.current) return;
+    // Set up an observer to check if this div is on the screen
     const observer = new IntersectionObserver(([entry]) => {
       if (entry?.isIntersecting) onVisible();
     });
     observer.observe(ref.current);
-    return () => observer.disconnect();
+    return () => observer.disconnect(); // Clean up so we don't leak memory
   }, [onVisible]);
 
   return <div ref={ref} style={{ height: 1 }} />;
@@ -56,12 +58,14 @@ export default function TasksBoard() {
   const deleteTask = useTasksStore((state) => state.deleteTask);
   const moveTask = useTasksStore((state) => state.moveTask);
 
+  //states to handle Dialogs popup
   const [showTaskDialog, setShowTaskDialog] = useState(false);
   const [dialogMode, setDialogMode] = useState<"add" | "edit">("add");
   const [selectedColumn, setSelectedColumn] = useState<TaskColumn>("backlog");
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [dialogSubmitting, setDialogSubmitting] = useState(false);
 
+  //track how many tasks to show per column
   const [visibleCounts, setVisibleCounts] = useState<
     Record<TaskColumn, number>
   >({
@@ -70,6 +74,8 @@ export default function TasksBoard() {
     review: TASKS_PER_PAGE,
     Done: TASKS_PER_PAGE,
   });
+
+  //? used react query to fetch tasks and cashed them, and used isPending for loading.
 
   const { isPending, refetch } = useQuery({
     queryKey: ["tasks"],
@@ -81,15 +87,18 @@ export default function TasksBoard() {
 
   const isSearching = searchQuery.trim().length > 0;
 
+  //? filter by name
   const filteredTasks = tasks.filter(
     (task) =>
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.description.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  // Helper to grab only tasks that belong in a certain column (like "backlog" or "Done")
   const getTasksByColumn = (column: TaskColumn) =>
     filteredTasks.filter((task) => task.column === column);
 
+  // Whenever the user types a new search query, reset the infinite scroll
   useEffect(() => {
     setVisibleCounts({
       backlog: TASKS_PER_PAGE,
@@ -114,56 +123,63 @@ export default function TasksBoard() {
   };
 
   const closeTaskDialog = () => {
+    // Prevent closing if it's saving
     if (dialogSubmitting) return;
     setShowTaskDialog(false);
     setSelectedTask(null);
   };
 
+  // Called when the user hits "Save" inside thedialog
   const handleTaskDialogSubmit = async (values: TaskFormValues) => {
-    setDialogSubmitting(true);
+    setDialogSubmitting(true); // show a loading spinner or disable buttons
     try {
       if (dialogMode === "add") {
-        await addTask(values);
+        await addTask(values); // Create a new one
       } else if (selectedTask) {
-        await updateTask(selectedTask.id, values);
+        await updateTask(selectedTask.id, values); // Edit the existing one
       }
+      // Re-fetch everything just to be safe that we have the newest data
       await refetch();
       setShowTaskDialog(false);
       setSelectedTask(null);
     } catch {
-      // error handled with zustand store
+      // The error is actually stored in zustand! No need to alert here, we might show a red toast later.
     } finally {
-      setDialogSubmitting(false);
+      setDialogSubmitting(false); // Done saving!
     }
   };
 
+  // main function to handle when we drop card in new column
   const handleDragEnd = async (result: DropResult) => {
     const { source, destination, draggableId } = result;
 
+    // prevent outside the column
     if (!destination) return;
 
     const from = source.droppableId as TaskColumn;
     const to = destination.droppableId as TaskColumn;
-
     if (from === to && source.index === destination.index) return;
-
     const updated = [...tasks];
     const taskIndex = updated.findIndex((t) => String(t.id) === draggableId);
     if (taskIndex === -1) return;
 
     const [task] = updated.splice(taskIndex, 1);
-    task.column = to;
+    task.column = to; //update its category
 
+    // gettting the new column
     const destColumnTasks = updated.filter((t) => t.column === to);
     const insertAfter = destColumnTasks[destination.index - 1];
     const insertIndex = insertAfter
       ? updated.indexOf(insertAfter) + 1
       : updated.findIndex((t) => t.column === to);
 
+    // Splice it back in at its new spot
     updated.splice(insertIndex === -1 ? updated.length : insertIndex, 0, task);
 
+    // Save our new order to zustand
     setTasksOrder(updated);
 
+    // Try telling the backend that it moved
     if (from !== to) {
       try {
         await moveTask(task.id, to);
@@ -174,6 +190,7 @@ export default function TasksBoard() {
   };
 
   return (
+    // DragDropContext wraps the area where things can be dragged around
     <DragDropContext onDragEnd={(result) => void handleDragEnd(result)}>
       <div className={styles.boardContainer}>
         {/* Header */}
@@ -210,7 +227,7 @@ export default function TasksBoard() {
           </div>
         </div>
 
-        {/* Tasks Board */}
+        {/* Tasks Board - loop through each of our 4 preset columns to render them */}
         <div className={`${styles.tasksBoard} px-lg-4 pb-4`}>
           <div className="container-fluid h-100">
             <div className="row g-4 h-100">
@@ -245,6 +262,7 @@ export default function TasksBoard() {
                       <div
                         className={`${styles.tasksContainer} d-flex flex-column gap-3 overflow-y-auto`}
                       >
+                        {/* Define droppable zones so dragging knows where cards can land */}
                         <Droppable droppableId={column.key}>
                           {(provided) => (
                             <div
@@ -264,6 +282,7 @@ export default function TasksBoard() {
                               )}
 
                               {visibleTasks.map((task, index) => (
+                                // Make task card draggable
                                 <Draggable
                                   key={task.id}
                                   draggableId={String(task.id)}
@@ -291,8 +310,10 @@ export default function TasksBoard() {
                                   )}
                                 </Draggable>
                               ))}
+                              {/*react-dnd placeholder to make spaces*/}
                               {provided.placeholder}
 
+                              {/* load more tasks when need (infinite scroll) */}
                               {hasMore && (
                                 <Infinite
                                   onVisible={() =>
